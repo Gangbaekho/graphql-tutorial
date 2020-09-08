@@ -16,5 +16,13 @@
   "devDependencies": {
     "nodemon": "^1.17.5"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gangbaekho/graphql-tutorial.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Gangbaekho/graphql-tutorial/issues"
+  },
+  "homepage": "https://github.com/Gangbaekho/graphql-tutorial#readme",
   "description": ""
 }
