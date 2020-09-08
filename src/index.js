@@ -39,3 +39,5 @@ const server = new GraphQLServer({
 server.start(()=>{
     console.log('The server is up')
 })
+
+console.log('git test')
