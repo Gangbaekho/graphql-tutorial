@@ -39,7 +39,7 @@ const posts = [
     }
     ,
     {
-        id:'101',
+        id:'102',
         title:'React is fun',
         body:'Why dont you leanrn progrmming skills',
         published : true,
@@ -53,22 +53,26 @@ const comments = [
     {
         id:'1001',
         text:'comment from 1001 id',
-        author:'1'
+        author:'1',
+        post:'100'
     },
     {
         id:'1002',
         text:'comment from 1002 id',
-        author:'1'
+        author:'1',
+        post:'100'
     },
     {
         id:'1003',
         text:'comment from 1003 id',
-        author:'2'
+        author:'2',
+        post:'101'
     },
     {
         id:'1004',
         text:'comment from 1004 id',
-        author:'3'
+        author:'3',
+        post:'102'
     }
 ]
 
@@ -96,12 +100,14 @@ const typeDefs = `
         body:String!
         published:Boolean!
         author:User!
+        comments:[Comment!]!
     }
 
     type Comment {
         id:ID!
         text:String!
         author:User!
+        post:Post!
     }
 `
 // Resolvers(function)
@@ -137,6 +143,11 @@ const resolvers = {
             return users.find((user)=>{
                 return user.id === parent.author
             })
+        },
+        comments(parent,args,ctx,info){
+            return comments.filter((comment)=>{
+                return parent.post === post.id
+            })
         }
     },
     User:{
@@ -156,6 +167,11 @@ const resolvers = {
         author(parent,args,ctx,info){
             return users.find((user)=>{
                 return user.id === parent.author
+            })
+        },
+        post(parent,args,ctx,info){
+            return posts.find((post)=>{
+                return post.id === comment.post
             })
         }
     }
