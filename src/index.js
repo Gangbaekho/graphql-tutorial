@@ -52,19 +52,23 @@ const posts = [
 const comments = [
     {
         id:'1001',
-        text:'comment from 1001 id'
+        text:'comment from 1001 id',
+        author:'1'
     },
     {
         id:'1002',
-        text:'comment from 1002 id'
+        text:'comment from 1002 id',
+        author:'1'
     },
     {
         id:'1003',
-        text:'comment from 1003 id'
+        text:'comment from 1003 id',
+        author:'2'
     },
     {
         id:'1004',
-        text:'comment from 1004 id'
+        text:'comment from 1004 id',
+        author:'3'
     }
 ]
 
@@ -83,6 +87,7 @@ const typeDefs = `
         email:String!
         age:Int
         posts:[Post!]!
+        comments:[Comment!]!
     }
 
     type Post {
@@ -96,6 +101,7 @@ const typeDefs = `
     type Comment {
         id:ID!
         text:String!
+        author:User!
     }
 `
 // Resolvers(function)
@@ -137,6 +143,19 @@ const resolvers = {
         posts(parent,args,ctx,info){
             return posts.filter((post)=>{
                 return post.author === parent.id
+            })
+        },
+        // User안에 있는 comments는 이 return 값으로 해라 라는 뜻.
+        comments(parent,args,ctx,info){
+            return comments.filter((comment)=>{
+                return comment.author === parent.id
+            })
+        }
+    },
+    Comment:{
+        author(parent,args,ctx,info){
+            return users.find((user)=>{
+                return user.id === parent.author
             })
         }
     }
