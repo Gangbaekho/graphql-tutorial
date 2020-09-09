@@ -1,4 +1,5 @@
 import { GraphQLServer} from 'graphql-yoga'
+import uuidv4 from 'uuid/v4'
 
 // Demo user data
 const users = [
@@ -85,6 +86,10 @@ const typeDefs = `
       comments:[Comment!]!
     }
 
+    type Mutation {
+        createUser(name:String!,email:String!,age:Int): User!
+    }
+
     type User {
         id: ID!
         name:String!
@@ -135,6 +140,27 @@ const resolvers = {
         },
         comments(parent,args,ctx,info){
             return comments
+        }
+    },
+    Mutation:{
+        createUser(parent,args,ctx,info){
+            // 같은 이메일을 가진 사람이 있냐를 알 수 있는 메소드
+            const emailTaken = users.some((user)=> user.email === args.email)
+
+            if(emailTaken){
+                throw new Error('Email taken.')
+            }
+
+            const user = {
+                id:uuidv4(),
+                name:args.name,
+                email:args.email,
+                age:args.age
+            }
+
+            users.push(user)
+
+            return user
         }
     },
     Post:{
