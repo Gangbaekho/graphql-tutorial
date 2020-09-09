@@ -21,6 +21,7 @@ const users = [
     }
 ]
 
+// Demo post data
 const posts = [
     {
      id:'100',
@@ -44,7 +45,27 @@ const posts = [
         published : true,
         author:'2'
     }
-    
+]
+
+// Demo comment data
+
+const comments = [
+    {
+        id:'1001',
+        text:'comment from 1001 id'
+    },
+    {
+        id:'1002',
+        text:'comment from 1002 id'
+    },
+    {
+        id:'1003',
+        text:'comment from 1003 id'
+    },
+    {
+        id:'1004',
+        text:'comment from 1004 id'
+    }
 ]
 
 // Type definitions (schema,datastructure)
@@ -53,6 +74,7 @@ const typeDefs = `
       users(query:String):[User!]!
       post:[Post!]!
       me:User!
+      comments:[Comment!]!
     }
 
     type User {
@@ -69,6 +91,11 @@ const typeDefs = `
         body:String!
         published:Boolean!
         author:User!
+    }
+
+    type Comment {
+        id:ID!
+        text:String!
     }
 `
 // Resolvers(function)
@@ -93,6 +120,9 @@ const resolvers = {
         },
         post(parent,args,ctx,info){
             return posts
+        },
+        comments(parent,args,ctx,info){
+            return comments
         }
     },
     Post:{
