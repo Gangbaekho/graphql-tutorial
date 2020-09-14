@@ -2,7 +2,7 @@ import { GraphQLServer} from 'graphql-yoga'
 import uuidv4 from 'uuid/v4'
 
 // Demo user data
-const users = [
+let users = [
     {
         id:'1',
         name:'Andrew',
@@ -23,7 +23,7 @@ const users = [
 ]
 
 // Demo post data
-const posts = [
+let posts = [
     {
      id:'100',
      title:'Leaning JPA',
@@ -50,7 +50,7 @@ const posts = [
 
 // Demo comment data
 
-const comments = [
+let comments = [
     {
         id:'1001',
         text:'comment from 1001 id',
@@ -88,6 +88,7 @@ const typeDefs = `
 
     type Mutation {
         createUser(data:CreateUserInput!): User!
+        deleteUser(id:ID!):User!
         createPost(data:CreatePostInput!):Post!
         createComment(data:CreateCommentInput!):Comment!
     }
@@ -180,6 +181,40 @@ const resolvers = {
             users.push(user)
 
             return user
+        },
+        deleteUser(parent,args,ctx,info){
+            const userIndex = users.findIndex((user)=> user.id === args.id)
+
+            /* 일치하는 idx가 없을떄는 -1을 return 한다는 것을
+            알아두면된다. */ 
+            if(userIndex === -1){
+                throw new Error('User not found')
+            }
+
+            // splice는 첫번째 argument를 시작으로 두번째 argument 갯수만큼 지운다는 것이고,
+            // return 값으로는 지워진 것들의 array를 return 한다.
+            // 그래서 return deletedUser[0] 을 한것이다.
+            const deletedUser = users.splice(userIndex,1)
+
+            /* 이게 끝은 아니다 왜나하면은 user에 걸려있는 모든 post와comment를
+            날려줘야 정합성이 맞는 데이터가 생긴다 하는 것이다. */
+
+            posts = posts.filter((post)=>{
+                const match = post.author === args.id
+
+                if(match){
+                    comments = comments.filter((comment)=>comment.post !== post.id)
+                }
+
+                return !match
+            })
+
+            /* 이러한 것을 사용하기 위해서
+            comments를 let으로 바꿔 놨다는 것을 이해하자.
+            왜냐하면 새로운 Object를 등록하는 것이기 때문에 const로 하면은 error가 날 것이다. */
+            comments = comment.filter((comment)=>comment.author !== args.id)
+
+            return deletedUser[0]
         },
         createPost(parent,args,ctx,info){
             const userExists = users.some((user)=> user.id === args.data.author)
