@@ -87,15 +87,28 @@ const typeDefs = `
     }
 
     type Mutation {
-        createUser(data:CreateUserInput): User!
-        createPost(title:String!,body:String!,published:Boolean,author:ID!):Post!
-        createComment(text:String!,author:ID!,post:ID!):Comment!
+        createUser(data:CreateUserInput!): User!
+        createPost(data:CreatePostInput!):Post!
+        createComment(data:CreateCommentInput!):Comment!
     }
 
     input CreateUserInput {
         name: String!
         email: String!
         age: Int
+    }
+
+    input CreatePostInput{
+        title:String!
+        body:String!
+        published:Boolean!
+        author:ID!
+    }
+
+    input CreateCommentInput{
+        text:String!
+        author:ID!
+        post:ID!
     }
 
     type User {
@@ -169,7 +182,7 @@ const resolvers = {
             return user
         },
         createPost(parent,args,ctx,info){
-            const userExists = users.some((user)=> user.id === args.author)
+            const userExists = users.some((user)=> user.id === args.data.author)
             
             if(!userExists){
                 throw new Error('User not found')
@@ -177,7 +190,7 @@ const resolvers = {
 
             const post = {
                 id:uuidv4(),
-                ...args
+                ...args.data
             }
 
             posts.push(post)
@@ -185,8 +198,8 @@ const resolvers = {
             return post
         },
         createComment(parent,args,ctx,info){
-            const userExist = users.some((user) => user.id === args.author)
-            const postExist = posts.some((post)=> post.id === args.post)
+            const userExist = users.some((user) => user.id === args.data.author)
+            const postExist = posts.some((post)=> post.id === args.data.post)
 
             if(!userExist && !postExist){
                 throw new Error('User or Post doenst exist')
@@ -194,7 +207,7 @@ const resolvers = {
 
             const comment = {
                 id:uuidv4(),
-                ...args
+                ...args.data
             }
 
             return comment
